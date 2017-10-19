@@ -1,11 +1,11 @@
 <?php
 class RIW_Widget extends WP_Widget {
-	function RIW_Widget() {
+	function __construct() {
 		$widget_ops = array(
 			'classname' => 'riw_widget',
 			'description' => __( 'A rotating image widget that pulls images from WordPress\' default image gallery.')
 		);
-		$this->WP_Widget( 'riw_widget', __('Rotating Images'), $widget_ops );
+		parent::__construct( 'riw_widget', __('Rotating Images'), $widget_ops );
 	}
 	
 	function form( $instance ) {
@@ -84,10 +84,15 @@ function get_images($height, $width, $count, $order) {
 		$i+=1;
 	}
 }
+/* Enqueue Style and Script */
+function ri_include_style_script(){
+	wp_enqueue_style( 'riw-override-css', RIW_INC_URI . '/riw.css', '', '1.0', 'screen' );
+	wp_enqueue_script( 'jquery' );
+	wp_enqueue_script( 'riw-javascript', RIW_INC_URI . '/riw.js', array('jquery'), '1.0', true);
+}
 
 // Hooks and such //
 add_action('widgets_init', create_function('', 'return register_widget("RIW_Widget");'));
-wp_enqueue_style( 'riw-override-css', RIW_INC_URI . '/riw.css', '', '1.0', 'screen' );
-wp_enqueue_script( 'jquery' );
-wp_enqueue_script( 'riw-javascript', RIW_INC_URI . '/riw.js', 'jquery', '1.0', true);
+add_action( 'wp_enqueue_scripts', 'ri_include_style_script' );
+
 ?>
